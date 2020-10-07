@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>EmployeeList</title>
+
+<body>
+	<div th:fragment="ListEmployee" class="container-fluid">
+		<div>
+			<a class="btn btn-primary" href="javascript:void(0);"
+				onclick="getPDFFF()">GetPDFF</a>
+		</div>
+		<table id="link-list" class="table table-bordered" style="width: 150%">
+			<thead>
+				<tr>
+					<th><span th:text="#{index}">Index</span></th>
+					<th><span th:text="#{Employee Name}">Employee Name</span></th>
+					<th><span th:text="#{Employee Id}">Employee Id</span></th>
+					<th><span th:text="#{Employee Working Status}">Active</span></th>
+					<th><span th:text="#{Informed}">Informed</span></th>
+					<th><span th:text="#{Generate Application Form}"></span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="article,iState : ${employeeList}">
+					<td th:text="${{iState.index+1}}"></td>
+					<td th:text="${{article.name}}"></td>
+					<td><a class="btn btn-primary" href="javascript:void();"
+						th:href="@{|/editemployeedetail/${article.id}|}"> <span
+							th:text="${{article.id}}"></span></a></td>
+					<td th:text="#{Active}" th:if="${{article.active}}" class="active"></td>
+					<td th:text="#{Inactive}" th:if="${{!article.active}}"
+						class="inactive"></td>
+					<td th:text="#{Yes}" th:if="${{article.informedFamily}}"
+						class="active"></td>
+					<td th:text="#{No}" th:if="${{!article.informedFamily}}"
+						class="inactive"></td>
+					<td><a class="btn btn-primary" href="javascript:void(0)"
+						th:href="@{|/generateApplicationForm/${article.id}/|}"
+						th:attr="disabled=${article.informedFamily?'disabled':''}"> <span
+							th:text="#{Generate}"></span>
+					</a></td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="row" th:fragment="pagination">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<nav aria-label="Pagination">
+					<ul class="pagination justify-content-center">
+						<li class="page-item" th:each="pageNumber : ${pageNumbers}">
+							<a class="page-link" th:href="@{|/inbox/page/${pageNumber}|}"
+							th:text=${pageNumber}>1</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+			<div class="col-md-2"></div>
+
+		</div>
+
+	</div>
+</body>
+</html>

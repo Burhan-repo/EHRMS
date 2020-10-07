@@ -1,0 +1,48 @@
+.navbar-customs {
+	background-color: #7300e6;
+	color: white;
+}
+
+.active {
+	background-color: green;
+	color: black;
+}
+
+.inactive {
+	background-color: red;
+	color: black;
+}
+
+.unread {
+	background-color:  #ff6666;
+	color:white;	
+}
+
+.custom-anchor {
+	color: white;
+}
+
+.side {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	padding: 0;
+}
+
+.scroll-area {
+	width: 30%;
+	height: calc(100% - 200px);
+	margin-top: 20px;
+	margin-right: 20px;
+	float: left;
+	overflow-y: scroll;
+}
+
+.btn-toolbar .btn {
+	margin-right: 5px;
+}
+
+.btn-toolbar .btn:last-child {
+	margin-right: 0;
+}

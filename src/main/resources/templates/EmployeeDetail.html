@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Compassionate Recruitment</title>
+
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid" sec:authorize="isAuthenticated()">
+		<div class="row">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="Sidebar1_2::Sidebar1_2"></div>
+			<div class="col-sm">
+				<div class="row justify-content-center">
+					<h3>
+						<b><span th:text="#{Close Service Book}">Close Service Book</span></b>
+					</h3>
+				</div>
+				<div class="row">
+					<p th:text="${message}" th:if="${message ne null}"
+						class="alert alert-primary"></p>							
+				</div>
+				<div class="row">
+					<span
+						th:text="#{Recruitment Module}"> 
+					</span>-	<span th:text="#{Compassionate Recruitment}"></span>-
+					<span th:text="#{Close Service Book}">
+							Close Service Book
+						</span>
+					
+				</div>
+				<div class="row  border border-dark p-1">
+					<div class="col-sm-8">
+						<form th:action="@{/editemployeedetail}" th:object="${employee}"
+							method="post"
+							enctype="multipart/form-data" id="employeeid">
+							<div class="form-group">
+								<label for="employeename"><span
+									th:text="#{Employee Name}"></span>:</label> 
+									<input type="text"
+									id="employeename" th:field="*{name}"
+									required="required" class="form-control" placeholder="Enter Employee Name" readonly="readonly">
+									<input type="hidden" th:field="${{employee.id}}" th:name="${{employee.name}}" th:value="${{employee.id}}">
+								<p class="alert alert-danger"
+									th:if="${#fields.hasErrors('name')}"
+									th:errors="*{name}">Employee Name Error</p>
+							</div>
+							<div class="form-group">
+								<label for="reasons"><span th:text="#{Reason for closing service book}"></span></label>
+								<select id="reason" name="reason" class="form-control"
+									th:field="*{reasonCloseBook}">
+									<option th:each="Reason : ${reasonList}" th:value="${Reason.reason}"
+										th:text="${Reason.reason}"></option>
+								</select>	
+							</div>
+							<div class="form-group">
+								<label for="date"><span th:text="FileUpload"></span></label>
+								<input type="file" name="file" id="file" placeholder="Please upload file" accept=".pdf" 
+								onchange="FileTypeValidatePDF(this)">
+								<p class="alert alert-danger" th:if="${fileNameNotFound ne null}" th:text="${fileNameNotFound}">
+								File Name
+									Error</p>								
+							</div>
+							<div class="form-group">
+								<label for="date"><span th:text="#{Service close date}">Service close
+										Date:</span></label> 
+										<input id="closedate" min="1900-01-01"
+									max="2099-09-13" type="date" th:field=*{dateOfClose} />
+								<p class="alert alert-danger"
+									th:if="${#fields.hasErrors('dateOfClose')}"
+									th:errors="*{dateOfClose}" id="dateOfClose">Date of close
+									Error</p>
+							</div>
+							<div class="form-group">
+								<label for="Remark"><span
+									th:text="#{Remarks}"></span>:</label> 
+									<textarea id="editor" th:field="*{information}"></textarea>
+								<p class="alert alert-danger"
+									th:if="${#fields.hasErrors('information')}"
+									th:errors="*{information}">Information error</p>
+							</div>
+							<button type="submit" class="btn btn-primary" name="save" id="save">
+								<span th:text=#{Save}></span>
+							</button>						
+						</form>	
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+</body>
+</html>

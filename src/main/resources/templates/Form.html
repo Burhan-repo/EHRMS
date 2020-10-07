@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Form</title>
+
+<body>
+	<div th:fragment="Form" class="container-fluid" >
+		<div class="row" th:object="${notice}">
+			<h2 th:if="${!notice.approved}">
+				<b><span th:text="#{Prepare Recruitment Proposal}">Prepare
+						a recruitment proposal</span></b>
+			</h2>
+			<h2 th:if="${notice.approved and notice.authority=='DEP'}">
+				<b>Finalize proposal</b>
+			</h2>
+
+		</div>
+		<div class="row">
+			<span
+				th:text="#{Recruitment Module > Recruitment by Individual Departments through MPSC}">
+				<span sec:authorize="hasRole('ROLE_DEPARTMENT')">Proposal
+					Department</span> <span sec:authorize="hasRole('ROLE_16B')">16B</span> <span
+				sec:authorize="hasRole('ROLE_AA')">Auditing Authority </span> <span
+				sec:authorize="hasRole('ROLE_VAC')">VAC</span>
+			</span>
+		</div>
+		<div class="row border border-dark p-3">
+			<form th:action="@{/registernotice}" th:object="${notice}"
+				onsubmit="return FileTypeValidate()" method="post"
+				enctype="multipart/form-data" id="noticeregisterid"
+				class="needs-validation" novalidate>
+				<div class="row">
+					<div class="form-group col-md-6">
+						<label for="designations"><span th:text=#{Designation}></span></label>
+						<!-- 						<select id="depart" name="depart" class="form-control"
+							th:field="*{designation}">
+							<option th:each="Design : ${designation}" th:value="${Design}"
+								th:text="${Design}"></option>
+						</select> -->
+						<input type="text" class="form-control" th:field="*{designation}"
+							readonly="readonly" id="depart" placeholder="12345">
+						<p th:if="${#fields.hasErrors('designation')}"
+							th:errors="*{designation}" id="designationError">Designation
+							Error</p>
+					</div>
+					<div class="form-group col-md-6" id="hidden_div"
+						th:if="${notice.id>0}" style="color: red">
+						<label for="exampleFormControlInput1"><span
+							th:text=#{Noticeid}></span></label> <input type="text"
+							class="form-control" th:field="*{id}" readonly="readonly"
+							id="noticeId" placeholder="12345">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="expectedvacancy"><span
+						th:text=#{expectedvacancy}></span></label> <input type="number" min="0"
+						id="exptectedvacancy" th:field="*{expectedvacancy}"
+						required="required" class="form-control"
+						placeholder="Enter Vacancy">
+					<p class="alert alert-danger"
+						th:if="${#fields.hasErrors('expectedvacancy')}"
+						th:errors="*{expectedvacancy}">Extra vacancy Error</p>
+				</div>
+				<div class="form-group">
+					<label for="reservedvacancy"><span
+						th:text=#{reservedvacancy}></span></label> <input type="number" min="0"
+						id="reservedvacancy" th:field="*{reservedvacancy}"
+						required="required" class="form-control" placeholder="100">
+					<p class="alert alert-danger"
+						th:if="${#fields.hasErrors('reservedvacancy')}"
+						th:errors="*{reservedvacancy}">Extra vacancy Error</p>
+				</div>
+				<div class="form-group">
+					<label for="vacancy"><span th:text=#{vacancy}></span></label> <input
+						min="0" type="number" id="totalvacancy" th:field="*{totalvacancy}"
+						required="required" class="form-control"
+						placeholder="Enter total vacancy">
+					<p class="alert alert-danger"
+						th:if="${#fields.hasErrors('totalvacancy')}"
+						th:errors="*{totalvacancy}">Designation Error</p>
+				</div>
+
+				<div class="form-group">
+					<label for="extravacancy"><span th:text=#{extravacancy}></span></label>
+					<input type="number" id="extravacancy" th:field="*{extravacancy}"
+						min="0" required="required" class="form-control" placeholder="100">
+					<p class="alert alert-danger"
+						th:if="${#fields.hasErrors('extravacancy')}"
+						th:errors="*{extravacancy}">Extra vacancy Error</p>
+				</div>
+				<div class="form-group">
+					<span>Vertical Vacancy:</span>
+					<table class="table">
+						<th:block>
+							<tr scope="row">
+								<td th:each="cates,iStat : ${reservedcate}"
+									th:if="${cates.type=='V'}"><span
+									th:text="${cates.CasteCode}"></span>:<input type="number"
+									min="0"
+									th:field="${notice.category[__${iStat.index}__].Vacancy}"
+									required="required" th:name="${cates.PercentageReserved}"
+									th:id="castvacancy__${iStat.index}__"
+									th:value="${notice.category[__${iStat.index}__].Vacancy}">
+									<input type="hidden"
+									th:field="${notice.category[__${iStat.index}__].Category_Name}"
+									th:name="${cates.PercentageReserved}"
+									th:value="${cates.CasteName}"
+									th:id="castname__${iStat.index}__"> <input
+									type="hidden"
+									th:field="${notice.category[__${iStat.index}__].Category_Code}"
+									th:name="${cates.PercentageReserved}"
+									th:value="${cates.CasteCode}"
+									th:id="castcode__${iStat.index}__"> <input
+									type="hidden"
+									th:field="${notice.category[__${iStat.index}__].Type}"
+									th:name="${cates.PercentageReserved}" th:value="${cates.Type}"
+									th:id="casttype__${iStat.index}__"></td>
+							</tr>
+						</th:block>
+					</table>
+				</div>
+				<div class="form-group"
+					th:style="${notice.approved ? 'display:block' : 'display:none'}">
+					<span>Horizontal Vacancy:</span>
+					<table class="table">
+						<th:block>
+							<tr>
+								<td th:each="cates,iStat : ${reservedcate}"
+									th:if="${cates.type=='H'}"><span
+									th:text="${cates.CasteCode}"></span>: <input type="number"
+									th:field="${notice.category[__${iStat.index}__].Vacancy}"
+									required="required" th:name="${cates.PercentageReserved}"
+									th:id="castvacancy__${iStat.index}__" min="0"
+									th:value="${notice.category[__${iStat.index}__].Vacancy}"
+									th:data-castecode="${cates.CasteCode}"
+									th:data-index="${iStat.index}"
+									onchange="changeValue(this.getAttribute('data-castecode'),this.getAttribute('data-index'))">
+									<input type="hidden"
+									th:field="${notice.category[__${iStat.index}__].Category_Name}"
+									th:name="${cates.PercentageReserved}"
+									th:value="${cates.CasteName}"
+									th:id="castname__${iStat.index}__"> <input
+									type="hidden"
+									th:field="${notice.category[__${iStat.index}__].Category_Code}"
+									th:name="${cates.PercentageReserved}"
+									th:value="${cates.CasteCode}"
+									th:id="castcode__${iStat.index}__"> <input
+									type="hidden"
+									th:field="${notice.category[__${iStat.index}__].Type}"
+									th:name="${cates.PercentageReserved}" th:value="${cates.Type}"
+									th:id="casttype__${iStat.index}__"></td>
+							</tr>
+						</th:block>
+					</table>
+				</div>
+				<div class="form-group">
+					<label for="subject"><span th:text=#{Subject}></span></label> <input
+						min="5" max="255" type="text" id="subject" th:field="*{subject}"
+						required="required" class="form-control"
+						placeholder="Enter Subject">
+					<p class="alert alert-danger"
+						th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}">Subject
+						Error</p>
+				</div>
+
+				<button type="button" class="btn btn-primary" data-toggle="modal"
+					data-target="#myModal2"
+					th:if="${proposalList != null and !proposalList.isEmpty()}">History
+					Info</button>
+				<div class="form-group">
+					<label><span th:text=#{Editor}></span></label>
+					<textarea id="editor" th:field="*{info}"></textarea>
+					<p class="alert alert-danger" th:if="${#fields.hasErrors('info')}"
+						th:errors="*{info}">Extra vacancy Error</p>
+				</div>
+				<div class="form-group">
+					<label for="file"><span th:text=#{FileUpload}></span></label> <input
+						type="file" accept=".pdf" name="FileUpload1"
+						class="form-control-file" id="FileUpload1" required="required">
+					<p class="alert alert-danger"
+						th:if="${#fields.hasErrors('filename')}" th:errors="*{filename}">Designation
+						Error</p>
+					<div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+						<p th:each="err : ${#fields.errors('*')}" th:text="${err}"></p>
+					</div>
+				</div>
+
+				<div class="form-group"
+					th:style="${(notice.authority == 'DEP' or notice.authority =='')? 'display:none' : 'display:block'}">
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" id="option1" name="option1"
+							class="custom-control-input" value=true th:field="*{approved}">
+						<label class="custom-control-label" for="option1">Approved</label>
+					</div>
+					<div class="custom-control custom-radio custom-control-inline">
+						<input type="radio" id="option2" name="option2"
+							class="custom-control-input" value=false th:field="*{approved}">
+						<label class="custom-control-label" for="option2">Not
+							Approved</label>
+					</div>
+				</div>
+
+
+				<div class="btn-toolbar mr-1" role="toolbar"
+					aria-label="Basic example">
+					<button type="submit" class="btn btn-primary" th:name="action"
+						id="save" th:value="save" th:if="${!notice.finalApproved}">
+						<span th:text=#{Save}></span>
+					</button>
+					<button type="button" class="btn btn-primary" name="preview"
+						onclick="generate()" data-toggle="modal" data-target="#myModal"
+						th:attrappend="disabled=${notice.id==null}?'disabled'">
+						<span th:text=#{Preview}></span>
+					</button>
+					<!-- 					<button type="button" th:href="@{|/pdf/${notice.id}|}" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">A - Cover Page</button> -->
+
+					<button type="submit" class="btn btn-primary"
+						th:if="${notice.authority=='DEP' && !notice.finalApproved}"
+						th:disabled="${notice.id == null}" th:name="action"
+						th:value="auditingauthority">
+						<span th:text=#{Send}></span>
+					</button>
+
+					<button type="submit" class="btn btn-primary"
+						th:disabled="${notice.id == null}"
+						th:if="${notice.authority != 'DEP' and notice.id != null}"
+						th:name="action" th:value="sendbackdept" id="backtodept">
+						<span>Send back to Department</span>
+					</button>
+
+					<button type="submit" class="btn btn-primary"
+						th:disabled="${notice.id == null}"
+						th:if="${notice.authority == 'AA' and notice.id != null}"
+						th:name="action" th:value="sendto16b">
+						<span>Send to 16B</span>
+					</button>
+
+					<button type="submit" class="btn btn-primary" id="vacbutton"
+						th:if="${notice.authority == 'AA' and notice.id != null}"
+						th:name="action" th:value="sendtovac">
+						<span>Send to VAC</span>
+					</button>
+
+					<button type="submit" class="btn btn-primary"
+						th:disabled="${notice.id == null}"
+						th:if="${notice.finalApproved and notice.id != null and notice.authority=='DEP'}"
+						th:name="action" th:value="sendtompsc">
+						<span>Send to MPSC</span>
+					</button>
+
+				</div>
+			</form>
+		</div>
+	<script th:inline="javascript">
+			var noticeObj = "" /*[[${notice}]]*/;
+				function test() {
+					noticeObj ="" /*[[${notice}]]*/;
+				}
+			
+				$(document).ready(function() {
+					  $('#vacbutton').prop('disabled', true);
+					  $('#extravacancy').change('input', function() {
+					    if ($(this).val() != noticeObj.extravacancy) {
+					      $('#vacbutton').prop('disabled', false);
+					      $('#save').prop('disabled',true);
+//					      $('#backtodept').prop('disabled',true);					      
+					    } else {
+					      $('#vacbutton').prop('disabled', true);
+//					      $('#save').prop('disabled',false);
+					      $('#backtodept').prop('disabled',false);
+					    }
+					  });
+					});
+				
+			</script>
+		
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog modal-xl">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body container">
+						<form th:object="${notice}" id="noticeregisterid"
+							class="needs-validation" novalidate>
+							<div class="row">
+								<div class="form-group col-sm" id="hidden_div"
+									th:if="${notice.id>0}" style="color: red">
+									<label for="exampleFormControlInput1"><span
+										th:text=#{Noticeid}></span>:</label> <b><span
+										th:text="${{notice.id}}"></span></b>
+								</div>
+
+								<div class="form-group col-sm">
+									<label for="designations"><span th:text=#{Designation}></span>:</label>
+									<b><span th:text="${{notice.designation}}"></span></b>
+								</div>
+								<div class="form-group col-sm">
+									<label for="expectedvacancy"><span
+										th:text=#{expectedvacancy}></span>:</label><b><span
+										th:text="${{notice.expectedvacancy}}"></span></b>
+
+								</div>
+								<div class="form-group col-sm">
+									<label for="reservedvacancy"><span
+										th:text=#{reservedvacancy}></span>:</label><b><span
+										th:text="${{notice.reservedvacancy}}"></span></b>
+								</div>
+
+
+							</div>
+							<div class="row">
+								<div class="form-group col-sm">
+									<label for="vacancy"><span th:text=#{vacancy}></span>:</label><b><span
+										th:text="${{notice.totalvacancy}}"></span></b>
+								</div>
+
+								<div class="form-group col-sm">
+									<label for="extravacancy"><span th:text=#{extravacancy}></span>:</label>
+									<b><span th:text="${{notice.extravacancy}}"></span></b>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-sm">
+									<span>Vertical Vacancy:</span>
+									<table class="table">
+										<th:block>
+											<tr>
+												<td th:each="cates,iStat : ${reservedcate}"
+													th:if="${cates.type=='V'}"><span
+													th:text="${cates.CasteCode}"></span>:<b><span
+														th:text="${{notice.category[__${iStat.index}__].Vacancy}}"></span></b>
+											</tr>
+										</th:block>
+									</table>
+								</div>
+								<div class="form-group col-sm"
+									th:style="${notice.approved ? 'display:block' : 'display:none'}">
+									<span>Horizontal Vacancy:</span>
+									<table class="table">
+										<th:block>
+											<tr>
+												<td th:each="cates,iStat : ${reservedcate}"
+													th:if="${cates.type=='H'}"><span
+													th:text="${cates.CasteCode}"></span>:<b><span
+														th:text="${{notice.category[__${iStat.index}__].Vacancy}}"></span></b>
+											</tr>
+										</th:block>
+									</table>
+								</div>
+
+							</div>
+						</form>
+						<object id="embedPDF" accept="application/pdf" data=""
+							width="100%" height="500" style="height: 85vh;">No
+							Support</object>
+						<!-- 			          <embed id ="embedPDF" src="" type="application/pdf" frameborder="0" width="100%" height="400px"> -->
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal 2 -->
+		<div class="modal fade" id="myModal2" role="dialog">
+			<div class="modal-dialog modal-xl">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="container">
+							<div class="row" th:each="history:${proposalList}">
+								<div class="col-sm-5 border border-dark p-3">
+									<form>
+										<div class="row">
+											<div class="form-group col-sm">
+												<label><span>Info:</span></label> <span
+													th:utext="${history.info}"></span>
+											</div>
+										</div>
+										<div class="row">
+											<div class="form-group col-sm">
+												<label>Modified By:</label> <b><span
+													th:text="${history.lastModifiedBy}"></span></b>
+											</div>
+										</div>
+										<div class="row">
+											<div class="form-group col-sm">
+												<label>Modified Date:</label> <b><span
+													th:text="${#temporals.format(history.lastModifiedDate, 'dd-MMM-yyyy')}"></span></b>
+											</div>
+
+										</div>
+										<div class="row">
+											<div class="form-group col-sm">
+												<label>Modified By IP Address:</label> <b><span
+													th:text="${history.remoteIp}"></span></b>
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class=col-sm-7>
+									<object id="embedPDFx" accept="application/pdf" width="100%"
+										height="500" th:attr="data=${{history.dataurl}}"
+										style="height: 85vh;">No Support</object>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+

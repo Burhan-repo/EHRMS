@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Candidates List</title>
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-2 border-right scroll-area"
+				th:insert="Sidebar::Sidebar"></div>
+			<div class="col-sm">
+				<div class="row">Details of documents Received</div>
+				<div class="row  border border-dark p-1">
+					<div class="col-md-8">
+						<table id="link-list" class="table table-striped table-bordered"
+							style="width: 150%">
+							<thead>
+								<tr>
+									<th th:text="#{index}"></th>
+									<th th:text="#{Noticeid}"></th>
+									<th th:text="#{MPSC candidate number}">MPSC candidate
+										number</th>
+									<th th:text="#{Roll number}">Roll Number</th>
+									<th th:text="#{Candidate name}">Candidate Name</th>
+									<th th:text="#{Designation}">Designation</th>
+									<th th:text="#{All documents verified}"></th>
+									<th th:text="#{Reverification}"></th>
+									<th th:text="#{Revenue department}">City</th>
+									<th th:text="#{Appointment Letter}"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="article : ${candidatelist}">
+									<td th:text="${{article.id}}"></td>
+									<td th:text="${{article.proposal[0].id}}">
+									<td th:text="${{article.mpsccandidatenumber}}"></td>
+									<td th:text="${{article.rollnumber}}"></td>
+									<td><a href="javascript:void(0);"
+										th:href="@{|/editCandidateDetail/${article.id}|}"> <span
+											th:text="${{article.candidatename}}"></span></a></td>
+									<td th:text="${{article.designation}}"></td>
+									<td th:text="${{article.verified}}"></td>
+									<td th:text="${{article.verified}}"></td>
+									<td th:text="${{article.city}}"></td>
+									<td th:text="${{article.offerletter}}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+				<div class="row" th:fragment="pagination">
+					<div class="col-md-2"></div>
+					<div class="col-md-8">
+						<nav aria-label="Pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item" th:each="pageNumber : ${pageNumbers}">
+									<a class="page-link"
+									th:href="@{|/candidateslist/page/${pageNumber}|}"
+									th:text=${pageNumber}>1</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+				<div class="row">
+					<div class="col text-center">
+						<button type="button" class="btn btn-primary" name="nextauthority">
+							<span>Next Authority</span>
+						</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

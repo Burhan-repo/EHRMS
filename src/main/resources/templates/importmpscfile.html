@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Import Data</title>
+
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid">
+		<div class="row d-flex">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="Sidebar::Sidebar"></div>
+			<div class="col-sm-8">
+				<h2>
+					<b>Prepare a recruitment proposal</b>
+				</h2>
+				<div class="row">
+					<span>Recruitment Module > Recruitment by Individual
+						Departments through MPSC > Prepare a Recruitment Proposal</span>
+				</div>
+				<div class="row border border-dark p-5">
+						<form th:action="@{|/mpscfileupload/${proposalId}|}" method="post"
+						enctype="multipart/form-data" id="noticeregisterid">
+						<div class="form-group">
+							<p th:text="${message}" th:if="${message ne null}"
+								class="alert alert-primary"></p>							
+						</div>
+						<div class="form-group">
+							<label for="proposalId"><span>Proposal Id:</span></label> <input
+								type="text" id="proposalId" th:value=${proposalId}
+								class="text-danger form-control-file" readonly="readonly"
+								disabled="disabled">
+						</div>
+						<div class="form-group">
+							<label for="file"><span th:text=#{FileUpload}></span></label> <input
+								type="file" name="file" accept=".csv,.xls,.xlsx"
+								class="form-control-file" id="FileUploadExcel"
+								onchange="FileTypeValidateExcel(this)">
+						</div>
+						<button type="submit" id = "uploadMPSC" name="uploadMPSC" class="btn btn-primary" disabled="disabled">
+							<span th:text="#{Import Selection list}">Import Selection
+								list</span>
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+</body>
+</html>

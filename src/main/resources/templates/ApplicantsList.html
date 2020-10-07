@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+
+</head>
+<title>Applicants List</title>
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid">
+		<div class="row d-flex">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="Sidebar1_2::Sidebar1_2"></div>
+			<div class="col-sm">
+				<div class="row justify-content-center">
+						<h3>
+							<b><span th:text="#{Inbox}">Inbox</span></b>
+						</h3>
+					</div>
+					<div class="row">
+						<p th:text="${message}" th:if="${message ne null}"
+						class="alert alert-primary"></p>							
+					</div>	
+					<div class="row">
+						<span>Recruitment
+							Module > Compassionate Recruitment > <span
+							sec:authorize="hasRole('ROLE_DEPARTMENT')"> Inbox</span> <span
+							sec:authorize="hasRole('ROLE_16B')">16B Inbox</span> <span
+							sec:authorize="hasRole('ROLE_AA')">Auditing Authority Inbox</span>
+							<span sec:authorize="hasRole('ROLE_VAC')">VAC Inbox</span>
+						</span>
+					</div>
+					<div class="row  border border-dark p-1">
+						<div class="col-sm-8">
+							<table id="link-list" class="table table-bordered"
+								style="width: 150%">
+								<thead>
+									<tr>
+										<th><span th:text="#{index}">Index</span></th>
+										<th><span th:text="#{Employee Name}">Employee Name</span></th>
+										<th><span th:text="#{Employee Id}">Employee Id</span></th>
+										<th><span th:text="#{applicationNumber}">applicationNumber</span></th>
+										<th><span th:text="#{approved}">Approved</span></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="article,iState : ${applicantsList}"  th:class="${article.view ? '': 'unread'}">
+										<td th:text="${{iState.index+1}}"></td>
+										<td th:text="${{article.employee.name}}"></td>
+										<td>
+											<span th:text="${{article.employee.id}}"></span>
+										</td>
+										<td>
+											<a class="btn btn-primary" href="javascript:void();"
+												th:href="@{|/getApplicationForm/${article.employee.authtoken}/${article.employee.id}|}"> 
+												<span th:text="${{article.id}}"></span></a>
+										</td>
+										<td th:text="#{Yes}" th:if="${{article.finalApproved}}"
+											class="active"></td>
+										<td th:text="#{No}" th:if="${{!article.finalApproved}}"
+											class="inactive"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="row" th:fragment="pagination">
+						<div class="col-md-2"></div>
+						<div class="col-md-8">
+							<nav aria-label="Pagination">
+								<ul class="pagination justify-content-center">
+									<li class="page-item" th:each="pageNumber : ${pageNumbers}">
+										<a class="page-link" th:href="@{|/inbox/page/${pageNumber}|}"
+										th:text=${pageNumber}>1</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+						<div class="col-md-2"></div>
+						
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

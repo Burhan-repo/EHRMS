@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Application Form</title>
+<body>
+	<div th:fragment="ApplicationForm" class="border border-dark p-5">
+	<div class="row">
+		<p th:text="${message}" th:if="${message ne null}"
+		class="alert alert-primary"></p>							
+	</div>	
+	<form th:action="@{/registerApplicants}" th:object="${applicants}"
+		method="post"
+		enctype="multipart/form-data" id="employeeid">
+		<div class="form-group">
+			<div class="custom-control custom-radio custom-control-inline">
+				<input type="radio" id="option1" name="option1"
+					class="custom-control-input" value="NEW" th:field="*{applicationType}">
+				<label class="custom-control-label" for="NEW">NEW</label>
+			</div>
+			<div class="custom-control custom-radio custom-control-inline">
+				<input type="radio" id="option2" name="option2"
+					class="custom-control-input" value="CHANGEDEPARTMENT" th:field="*{applicationType}">
+				<label class="custom-control-label" for="option2">Group Change</label>
+			</div>
+			<div class="custom-control custom-radio custom-control-inline">
+				<input type="radio" id="option3" name="option3"
+					class="custom-control-input" value="CHANGEAPPLY" th:field="*{applicationType}">
+				<label class="custom-control-label" for="option3">Designation Change</label>
+			</div>						
+		</div>
+		
+		
+		<div class="row">
+			<div class="form-group col-sm-3">
+				<label for="applicationNumber"><span>Application Number</span></label>
+				<input type="text" name="applicationNumber" id="applicationNumber" th:field="*{id}" readonly="readonly">
+			</div>
+			<div class="form-group col-sm-3">
+				<label><span th:text="#{Employee Id}"></span>
+				</label>
+				<input th:field="*{employeeId}" id="employeeId" readonly="readonly">
+			</div>
+				
+		</div>
+		
+
+		<div class="form-group">
+			<label for="family"><span>Family Member</span></label>
+			<select id="familymembers" name="family" class="form-control"
+				th:field="*{familyId}">
+				<option th:each="f : ${familyList}" th:value="${{f.id}}"
+					th:text="${{f.name}}"></option>
+			</select>
+		</div>
+		<div class="form-group">
+			<span>
+				<label for="age"><span th:text="#{Age}"></span>:</label><span id="age"></span>
+			</span>
+			<span>
+				<label for="dateofbirth"><span th:text="#{Dateofbirth}"></span>:</label><span id="dateofbirth"></span>
+			</span>
+		</div>	
+		<div class="form-group">
+			<label for="Qualification"><span>Qualification</span>:</label>
+			<select id="qualification" name="qualification" class="form-control"
+				th:field="*{qualification}">
+				<option th:each="f : ${degreeList}" th:value="${{f.degree_description}}"
+					th:text="${{f.degree_description}}"></option>
+			</select>
+		</div>
+		
+		<div class="form-group">
+			<label for="fileUpload"><span th:text="FileUpload"></span></label>
+			<input type="file" name="file" id="file" placeholder="Please upload file" accept=".pdf" 
+			onchange="FileTypeValidatePDF(this)">
+			<p class="alert alert-danger" th:if="${fileNameNotFound ne null}" th:text="${fileNameNotFound}">
+			File Name
+				Error</p>								
+		</div>
+		<div class="form-group" sec:authorize="isAuthenticated()">
+				<button type="button" class="btn btn-primary" data-toggle="modal"
+					data-target="#myModal">View Document</button>
+		</div>
+		
+		<div class="form-group" id="changer">
+			<label for="GroupSelection"><span>Select Group</span>:</label>
+			<select id="selectGroup" name="selectGroup" th:field="*{group}">
+				<option value="C" selected="selected">C</option>
+				<option value="D">D</option>
+			</select>
+		</div>
+		
+		<div class="form-group">
+			<label for="applicationNumber"><span>Application Number</span>:</label>
+			<input type="text" name="applicationNumber" id="applicationNumber" th:field="*{id}" readonly="readonly">
+		</div>
+		
+		<div class="form-group" sec:authorize="isAuthenticated()">
+			<div class="custom-control custom-radio custom-control-inline">
+				<input type="radio" id="option7" name="option7"
+					class="custom-control-input" value=true th:field="*{approved}">
+				<label class="custom-control-label" for="option7">Approved</label>
+			</div>
+			<div class="custom-control custom-radio custom-control-inline">
+				<input type="radio" id="option8" name="option8"
+					class="custom-control-input" value=false th:field="*{approved}">
+				<label class="custom-control-label" for="option8">Not
+					Approved</label>
+			</div>
+		</div>
+		<div class="form-group" sec:authorize="isAuthenticated()">
+			<label for="Remark"><span
+				th:text="#{Remarks}"></span>:</label> 
+				<textarea id="editor" th:field="*{remarks}"></textarea>
+			<p class="alert alert-danger"
+				th:if="${#fields.hasErrors('remarks')}"
+				th:errors="*{remarks}">Information error</p>
+		</div>
+		
+		<div class="btn-toolbar mr-1" role="toolbar"
+			aria-label="Basic example">
+			<button type="submit" class="btn btn-primary" th:name="action" th:if="${{!applicants.finalApproved}}"
+				id="save" th:value="save">
+				<span th:text=#{Save}></span>
+			</button>
+			<button type="button" class="btn btn-primary" name="preview" data-toggle="modal" data-target="#myModal" 
+				sec:authorize="isAuthenticated()">
+				<span th:text=#{Preview}></span>
+			</button>
+			<button type="submit" class="btn btn-primary" th:name="action" id="send" 
+				th:value="appointingauthority" sec:authorize="hasRole('ROLE_DEPARTMENT')" th:if="${{!applicants.finalApproved}}">
+				<span th:text=#{Send}></span>
+			</button>
+			<button type="submit" class="btn btn-primary" 
+				sec:authorize="hasRole('ROLE_AA')" th:if="${{!applicants.finalApproved}}"
+				th:name="action" th:value="sendbackdept" id="backtodept">
+				<span>Send back to Department</span>
+			</button>
+			<button type="submit" class="btn btn-primary" 
+				sec:authorize="hasRole('ROLE_DEPARTMENT')" th:if="${{applicants.finalApproved and !applicants.waiting}}"
+				th:name="action" th:value="sendtowaiting" id="waiting">
+				<span>Send to Wating List</span>
+			</button>
+			
+			
+		</div>		
+					<!-- Modal -->
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog modal-xl">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body container">
+						<object id="embedPDF" th:attr="data=${{applicants.dataurl}}"
+							width="100%" height="500" style="height: 85vh;">No
+							Support</object>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		
+		
+								
+	</form>	
+	<script th:inline="javascript">
+		var familyList = /*[[${familyList}]]*/;
+		$(document).ready(function() {
+			var selections = $("#familymembers :selected");
+	        var html = '';
+	        var des = '';
+	        var htmlx = '';
+	        $.each(selections,function(i,item){
+	        	for(var y=0;y<familyList.length;y++) {
+	        		console.log(familyList[y]+'---'+$(item).val());
+	        		if(familyList[y].id==$(item).val()) {
+	        			des = familyList[y];
+	        			break;
+	        		}
+	        	}
+	        	html = "&nbsp;&nbsp;"+des.age;	        	
+	        	htmlx = "&nbsp;&nbsp;"+des.dateOfBirth;
+	        	$("#age").html(html);   
+	        	$("#dateofbirth").html(htmlx);
+	        })
+	    });
+		
+		$("#familymembers").change(function(){
+			var selections = $("#familymembers :selected");
+	        var html = '';
+	        var des = '';
+	        var htmlx = '';
+	        $.each(selections,function(i,item){
+	        	for(var y=0;y<familyList.length;y++) {
+	        		console.log(familyList[y].id+'---'+$(item).val());
+	        		if(familyList[y].id==$(item).val()) {
+	        			des = familyList[y];
+	        			break;
+	        		}
+	        	}
+	        	console.log(des);
+	        	html = "&nbsp;&nbsp;"+des.age;	        	
+	        	htmlx = "&nbsp;&nbsp;"+des.dateOfBirth;
+	        	$("#age").html(html);   
+	        	$("#dateofbirth").html(htmlx);
+	        })
+	    })
+		
+	
+	</script>	
+	</div>
+</body>
+</html>

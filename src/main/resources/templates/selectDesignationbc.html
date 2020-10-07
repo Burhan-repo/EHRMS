@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Select Designation</title>
+
+<body>
+
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid">
+		<div class="row d-flex">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="sidebar3_2_4::sidebar3_2_4"></div>
+			<div class="col-sm-8">
+				<h2>
+					<b>Prepare a recruitment proposal</b>
+				</h2>
+				<div class="row">
+					<span>Recruitment Module > Recruitment by Individual
+						Departments through MPSC > Prepare a Recruitment Proposal</span>
+				</div>
+				<div class="row border border-dark p-5">
+					<p th:text="${message}" th:if="${message ne null}"
+						class="alert alert-primary"></p>
+					<form th:action="@{/newproposal}" th:object="${designation}"
+						method="post" id="noticeregisterid">
+						<div class="row">
+							<div class="form-group col-sm">
+								<label for="designations"><span
+									th:text="#{Select Group for Designation}">Select Group
+										for Designation</span>:</label> <select id="depart" name="depart"
+									class="form-control" th:field="${designation.service_group}">
+									<option th:each="Design : ${designationmap}"
+										th:value="${Design.key}" th:text="${Design.key}"></option>
+								</select>
+							</div>
+							<div class="form-group col-sm">
+								<!-- 								<div class="form-group" id="divSelectInput"></div>							 -->
+								<label for="depar"><span th:text="#{Designation}">Designation</span>:</label>
+								<select id="depar" name="depar" class="form-control"
+									th:field="${designation.designation_name_en}">
+								</select>
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script type="text/javascript" th:inline="javascript">
+	$(document).ready(function() {
+		var selections = $("#depart :selected");
+        var html = '';
+        $.each(selections,function(i,item){
+        	var designation = /*[[${designationmap}]]*/;
+        	var des = null;
+        	console.log(designation);
+        	for(var x in designation) {
+        		if(x==$(item).text()) {
+        			des = designation[$(item).text()];
+        			break;
+        		}
+        	}
+        	var htmlx = '';
+        	for(var y=0;y<des.length;y++) {
+            	htmlx+='<option th:value="'+des[y]+'">'+des[y]+'</option>';        		
+        	}
+        	$("#depar").html(htmlx);   
+            $("#depar").trigger('contentChanged');    
+        })
+    });
+	
+	$(function(){
+		$('#depart').change(function(){
+    		var selections = $("#depart :selected");
+        var html = '';
+        $.each(selections,function(i,item){
+        	var designation =  /*[[${designationmap}]]*/;
+        	var des = null;
+        	console.log(designation);
+        	for(var x in designation) {
+        		if(x==$(item).text()) {
+        			des = designation[$(item).text()];
+        			break;
+        		}
+        	}
+        	var htmlx = '';
+        	for(var y=0;y<des.length;y++) {
+            	htmlx+='<option th:value="'+des[y]+'">'+des[y]+'</option>';        		
+        	}
+        	$("#depar").html(htmlx);   
+            $("#depar").trigger('contentChanged');    
+        })
+    })
+	});
+	</script>
+</body>
+</html>

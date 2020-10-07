@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Compassionate Recruitment</title>
+
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid" sec:authorize="isAuthenticated()">
+		<div class="row">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="Sidebar1_2::Sidebar1_2"></div>
+			<div class="col-sm">
+				<div class="row justify-content-center">
+					<h3>
+						<b><span th:text="#{Close Service Book}">Close Service Book</span></b>
+					</h3>
+				</div>
+				<div class="row">
+					<p th:text="${message}" th:if="${message ne null}"
+						class="alert alert-primary"></p>							
+				</div>
+				<div class="row">
+					<span
+						th:text="#{Recruitment Module}"> 
+					</span>-	<span th:text="#{Compassionate Recruitment}"></span>-
+					<span th:text="#{Close Service Book}">
+							Close Service Book
+						</span>
+					
+				</div>
+				<div class="row  border border-dark p-1">
+					<div class="col-sm-8" th:insert="ListEmployee::ListEmployee" 
+					th:if="${employeeListEnable ne null and employeeListEnable}">	
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+</body>
+</html>

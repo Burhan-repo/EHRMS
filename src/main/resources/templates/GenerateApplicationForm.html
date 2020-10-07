@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Application Form</title>
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid">
+		<div class="row d-flex">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="Sidebar1_2::Sidebar1_2" sec:authorize="isAuthenticated()"></div>
+			<div class="col-sm" th:insert="ApplicationForm::ApplicationForm"></div>
+		</div>		
+	</div>
+</body>
+</html>

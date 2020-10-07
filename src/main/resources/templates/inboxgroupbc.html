@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+
+</head>
+<title>Group B and C Proposal Inbox</title>
+
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid" sec:authorize="isAuthenticated()">
+		<div class="row">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="sidebar3_2_4::sidebar3_2_4"></div>
+			<div class="col-sm">
+				<div class="row justify-content-center">
+					<h3>
+						<b><span th:text="#{Proposal Inbox Group B and C}">Proposal Inbox Group B and C </span></b>
+					</h3>
+				</div>
+				<div class="row">
+					<span
+						th:text="#{Recruitment Module > Recruitment of Group B (non-Gazetted) and Group C posts}">Recruitment
+						Module > Recruitment of Group B (non-Gazetted) and Group C posts <span
+						sec:authorize="hasRole('ROLE_DEPARTMENT')">Proposal Inbox</span> <span
+						sec:authorize="hasRole('ROLE_16B')">16B Inbox</span> <span
+						sec:authorize="hasRole('ROLE_AA')">Auditing Authority Inbox</span>
+						<span sec:authorize="hasRole('ROLE_VAC')">VAC Inbox</span>
+					</span>
+				</div>
+				<div class="row" sec:authorize="hasRole('ROLE_DEPARTMENT')">
+					<div class="dropdown">
+					    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter Proposal
+					    <span class="caret"></span></button>
+					    <ul class="dropdown-menu">
+					      <input class="form-control" id="myInput" type="text" placeholder="Search..">
+					      <li><a th:href="@{''(filter=ALL)}">ALL</a></li>
+					    </ul>
+					  </div>
+				</div>
+				<div class="row  border border-dark p-1">
+					<div class="col-sm-8">
+						<table id="link-list" class="table table-bordered"
+							style="width: 150%">
+							<thead>
+								<tr>
+									<th><span th:text=#{Noticeid}></span></th>
+									<th><span th:text=#{Subject}></span></th>
+									<th><span th:text="#{Current Authority}">Current Authority</span>
+									<th><span th:text=#{Date}></span></th>
+									<th><span th:text=#{Departments}></span></th>
+									<th><span th:text=#{Apply}></span></th>
+									<th><span th:text="#{Import Selection list}">Import
+											Mpsc File</span>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="article : ${noticelist}" th:class="${article.viewProposal ? '': 'unread'}">
+									<td th:text="${{article.id}}"></td>
+									<td th:utext="${{article.subject}}"></td>
+									<td th:text="${article.authority}">
+									<td th:text="${#temporals.format(article.date, 'dd-MMM-yyyy')}"></td>
+									<td th:text="${{article.depart}}"></td>
+									<td><span th:if="${!article.offlineImportEnable}">
+											<a href="javascript:void(0);"
+											th:href="@{|/createproposal/${article.id}|}"
+											class="btn btn-primary"> <span th:text="#{applyfor}"></span></a>
+										</span>
+										<span th:if="${article.offlineImportEnable}">
+											<button type="button" class="btn btn-primary" name="preview"
+											th:data-id ="${{article.id}}"
+												onclick="previewModalInbox(this.getAttribute('data-id'))">
+												<span th:text=#{Preview}></span>
+											</button>
+																	
+										</span>
+										</td>
+									<td><a th:href="@{|/getmpscfile/${article.id}|}"
+										th:if="${article.offlineImportEnable}" class="btn btn-primary">
+											<span th:text="#{Import Selection list}">Import
+												Selection list</span>
+									</a> <a th:if="${!article.offlineImportEnable}">NA</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row" th:fragment="pagination">
+					<div class="col-md-2"></div>
+					<div class="col-md-8">
+						<nav aria-label="Pagination">
+							<ul class="pagination justify-content-center">
+								<li class="page-item" th:each="pageNumber : ${pageNumbers}">
+									<a class="page-link" th:href="@{|/inbox/page/${pageNumber}|}"
+									th:text=${pageNumber}>1</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+
+			</div>
+		</div>
+	<div class="container">
+		<div class="row" th:each="notice:${noticelist}">
+		<!-- Modal -->
+			<div class="modal fade" th:id="myModal__${notice.id}__" role="dialog">
+				<div class="modal-dialog modal-xl">
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body container">
+							<form th:object="${notice}" th:id="noticeregisterid__${notice.id}__"
+								class="needs-validation" novalidate>
+								<div class="row">
+									<div class="form-group col-sm" id="hidden_div"
+										th:if="${notice.id>0}" style="color: red">
+										<label for="exampleFormControlInput1"><span
+											th:text=#{Noticeid}></span>:</label> <b><span
+											th:text="${{notice.id}}"></span></b>
+									</div>
+	
+									<div class="form-group col-sm">
+										<label for="designations"><span th:text=#{Designation}></span>:</label>
+										<b><span th:text="${{notice.designation}}"></span></b>
+									</div>
+									<div class="form-group col-sm">
+										<label for="expectedvacancy"><span
+											th:text=#{expectedvacancy}></span>:</label><b><span
+											th:text="${{notice.expectedvacancy}}"></span></b>
+	
+									</div>
+									<div class="form-group col-sm">
+										<label for="reservedvacancy"><span
+											th:text=#{reservedvacancy}></span>:</label><b><span
+											th:text="${{notice.reservedvacancy}}"></span></b>
+									</div>
+	
+	
+								</div>
+								<div class="row">
+									<div class="form-group col-sm">
+										<label for="vacancy"><span th:text=#{vacancy}></span>:</label><b><span
+											th:text="${{notice.totalvacancy}}"></span></b>
+									</div>
+	
+									<div class="form-group col-sm">
+										<label for="extravacancy"><span th:text=#{extravacancy}></span>:</label>
+										<b><span th:text="${{notice.extravacancy}}"></span></b>
+									</div>
+								</div>
+	
+								<div class="row">
+									<div class="form-group col-sm">
+										<span>Vertical Vacancy:</span>
+										<table class="table">
+											<th:block>
+												<tr>
+													<td th:each="cates,iStat : ${reservedcate}"
+														th:if="${cates.type=='V'}"><span
+														th:text="${cates.CasteCode}"></span>:<b><span
+															th:text="${{notice.category[__${iStat.index}__].Vacancy}}"></span></b>
+												</tr>
+											</th:block>
+										</table>
+									</div>
+									<div class="form-group col-sm"
+										th:style="${notice.approved ? 'display:block' : 'display:none'}">
+										<span>Horizontal Vacancy:</span>
+										<table class="table">
+											<th:block>
+												<tr>
+													<td th:each="cates,iStat : ${reservedcate}"
+														th:if="${cates.type=='H'}"><span
+														th:text="${cates.CasteCode}"></span>:<b><span
+															th:text="${{notice.category[__${iStat.index}__].Vacancy}}"></span></b>
+												</tr>
+											</th:block>
+										</table>
+									</div>
+	
+								</div>
+							</form>
+							<object id="embedPDF" accept="application/pdf" data=""
+								width="100%" height="500" style="height: 85vh;">No
+								Support</object>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+	
+	</div>
+	<script>
+		function previewModalInbox(id) {
+			var myModal = '#myModal'+id;
+			$(myModal).modal();
+		}
+	
+	</script>
+</body>
+</html>

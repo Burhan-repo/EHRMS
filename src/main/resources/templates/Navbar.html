@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="header::header">
+</head>
+<title>Navbar</title>
+
+<body>
+	<nav th:fragment="Navbar"
+		class="navbar navbar-fixed-top navbar-expand-lg navbar-dark navbar-customs">
+		<div class="navbar-brand mr-auto text-center d-flex">
+			<h1>eHRMS - Recruitment Module</h1>
+		</div>
+		<div id="navbar" class="d-flex collapse navbar-collapse">
+			<div class="navbar-nav ml-auto justify-content-between">
+				<span><svg height="140" width="300">
+							  <ellipse cx="200" cy="80" rx="100" ry="50"
+							style="fill:aliceblue;stroke:black;stroke-width:2" />
+							  <text x="200" y="80" text-anchor="middle" stroke="black"
+							stroke-width="1px"> सरकारी बांधकाम विभाग
+						    </text>
+							</svg> </span>
+			</div>
+			<div class="navbar-nav ml-auto">
+				<p sec:authorize="isAuthenticated()">
+					<span th:tex="#{Welcome}"></span> <span
+						sec:authentication="principal.username">User</span><br>
+					<span><a style="color: white" th:href="@{/logout}">Logout</a></span>
+				</p>
+			</div>
+			<div class="navbar-nav ml-auto">
+				<span>Language : <a th:href="@{''(lang=en)}"
+					class="custom-anchor">English</a> | <a th:href="@{''(lang=mr)}"
+					class="custom-anchor">मराठी</a></span>
+			</div>
+		</div>
+	</nav>
+</body>
+</html>

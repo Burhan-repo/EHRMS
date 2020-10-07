@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:replace="header::header">
+</head>
+<title>Recruitment Proposal</title>
+
+<body>
+	<div th:insert="Navbar::Navbar"></div>
+	<div class="container-fluid">
+		<div class="row text-center d-flex">
+			<!-- 		<p>
+			Welcome <span sec:authentication="principal.username">User</span>
+		</p> -->
+		</div>
+		<div class="row d-flex">
+			<div class="col-sm-3 border-right scroll-area"
+				th:insert="Sidebar::Sidebar"></div>
+			<div class="col-sm-8">
+				<h2>
+					<b>Generating Appointment Letter</b>
+				</h2>
+				<div class="row">
+					<span>Recruitment Module > Recruitment by Individual
+						Departments through MPSC > Prepare a Recruitment Proposal</span>
+				</div>
+				<div class="row border border-dark p-3">
+					<form class="col" method="post" th:object="${tableContent}"
+						enctype="multipart/form-data" id="noticeregisterid">
+						<div class="form-group">
+							<label><span th:text=#{Editor}></span></label>
+							<textarea id="editor" th:text="${tableContent}"></textarea>
+						</div>
+
+						<button type="submit" class="btn btn-primary">
+							<span>SAVE</span>
+						</button>
+						<button type="button" class="btn btn-primary" name="preview"
+							onclick="generate()">
+							<span th:text=#{Preview}></span>
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>
